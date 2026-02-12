@@ -1,5 +1,6 @@
 require('dotenv').config();
 console.log("SendGrid enabled:", !!process.env.SENDGRID_API_KEY);
+const fs = require('fs');
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -9,8 +10,27 @@ const sqlite3 = require('sqlite3').verbose();
 const sgMail = require('@sendgrid/mail');
 
 const app = express();
-const dbPath = path.join(__dirname, 'data', 'data.db');
-const db = new sqlite3.Database(dbPath);
+// Support configurable data directory (useful for hosts that require mounting a writable volume)
+const dataDir = process.env.DATA_DIR || path.join(__dirname, 'data');
+try {
+  fs.mkdirSync(dataDir, { recursive: true });
+} catch (e) {
+  console.error('Could not create data directory', dataDir, e);
+}
+const dbPath = path.join(dataDir, 'data.db');
+let db;
+try {
+  db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      console.error('Failed to open SQLite DB at', dbPath, err);
+      console.error('If running on a platform with an ephemeral filesystem, mount a persistent directory and set DATA_DIR to that path.');
+      process.exit(1);
+    }
+  });
+} catch (err) {
+  console.error('SQLite initialization error', err);
+  process.exit(1);
+}
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
