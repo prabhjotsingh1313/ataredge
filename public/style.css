@@ -1,0 +1,148 @@
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;color:#222}
+.container{max-width:900px;margin:24px auto;padding:0 16px}
+header{background:#0b72b9;color:#fff;padding:14px 0}
+.header-inner{max-width:1100px;margin:0 auto}
+header .container{display:flex;align-items:center;justify-content:space-between}
+a.nav{color:#fff;margin-left:12px;text-decoration:none}
+.nav-left{display:flex;align-items:center;gap:18px}
+.brand a{font-size:20px}
+.main-nav .nav{margin-right:12px;font-size:18px}
+.nav-right{display:flex;align-items:center;gap:8px}
+.contact-nav{margin-left:14px;padding:6px 10px;background:rgba(255,255,255,0.08);border-radius:6px}
+.featured-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+.featured-grid .card{margin:0}
+
+/* featured logos */
+.featured-logos{display:flex;gap:16px;align-items:center;margin-top:12px}
+.featured-logos img{max-height:96px;object-fit:contain;background:#fff;padding:8px;border-radius:6px;border:1px solid rgba(0,0,0,0.06)}
+.featured-logos{gap:24px}
+
+/* responsive header */
+@media (max-width:720px){
+	header .container{flex-direction:column;align-items:flex-start;gap:12px;padding:12px}
+	.main-nav .nav{font-size:16px}
+	.brand a{font-size:18px}
+}
+
+/* banners and CTA blocks */
+.banner{background:#f6fbff;border:1px solid #e2f0fb;padding:18px;border-radius:8px;margin:18px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.banner .banner-text{flex:1}
+.banner .banner-cta{margin-left:16px}
+
+/* join team form */
+.join-form .form-row{margin:10px 0}
+.join-form input,.join-form textarea{width:100%;padding:10px;border-radius:6px;border:1px solid #ccc}
+.join-form button{background:#0660a0;color:#fff;padding:10px 14px;border-radius:6px;border:none}
+
+/* footer */
+.site-footer{background:linear-gradient(90deg,#0b72b9,#0660a0);color:#fff;padding:12px 0;margin-top:28px;font-size:14px}
+.footer-inner{display:flex;gap:12px;align-items:center;justify-content:space-between}
+.footer-left,.footer-center,.footer-right{flex:0 1 auto}
+.footer-center{text-align:center;line-height:1}
+.footer-right{display:flex;align-items:center;gap:12px}
+.footer-email{display:inline-block}
+.socials a{color:#fff;font-size:18px;margin-left:8px;text-decoration:none}
+.site-footer a{color:#fff;text-decoration:underline}
+
+@media (max-width:800px){
+	.footer-inner{flex-direction:column;align-items:flex-start;gap:8px}
+}
+
+/* SVG social icons sizing */
+.socials svg{width:26px;height:26px;display:inline-block;vertical-align:middle}
+.socials a{display:inline-flex;align-items:center;justify-content:center}
+.card{border:1px solid #ddd;padding:12px;border-radius:6px;margin:8px 0}
+.form-row{margin:8px 0}
+input,textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px}
+button{background:#0b72b9;color:#fff;border:none;padding:8px 12px;border-radius:4px;cursor:pointer}
+footer{padding:12px;text-align:center;color:#666;font-size:14px;margin-top:32px}
+
+/* Home page hero + services */
+.hero{background:linear-gradient(180deg,#0b72b9 0%,#0660a0 100%);color:#fff;padding:48px 0;border-radius:6px;margin:16px 0}
+.hero-inner{max-width:800px;margin:0 auto;text-align:center}
+.hero h1{font-size:36px;margin:6px 0}
+.lead{font-size:18px;opacity:0.95}
+.cta-row{margin-top:18px}
+.btn{display:inline-block;background:#ffd166;color:#07223a;padding:10px 16px;border-radius:6px;text-decoration:none;margin-right:8px;font-weight:600}
+.btn-outline{background:transparent;border:2px solid rgba(255,255,255,0.22);color:#fff}
+.services{margin:24px 0}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+.service-card{background:#fff;border-radius:6px;padding:16px;border:1px solid #e6eef6}
+.service-card h3{margin-top:0}
+
+/* tutors grid */
+.tutors-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.tutor-card{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #e6eef6;padding:12px;border-radius:8px}
+.tutor-photo img{width:96px;height:96px;object-fit:cover;border-radius:8px}
+.tutor-photo .placeholder{width:96px;height:96px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#666}
+.tutor-info h3{margin:0}
+.tutor-info .meta{color:#666;margin-top:6px}
+.tutor-info .degree{color:#123d5a;margin-top:6px;font-size:14px}
+.tutor-info .rates{font-weight:600;margin-top:6px}
+.tutor-info .small{color:#444;margin-top:8px}
+.tutor-profile .profile-grid{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:start}
+.profile-photo img{width:120px;height:120px;object-fit:cover;border-radius:8px}
+.profile-photo .placeholder{width:120px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#666}
+
+/* tutors controls (title + filter on right) */
+.tutors-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tutors-filter select{padding:6px 8px;border-radius:6px;border:1px solid #ccc}
+
+/* aesthetic colours for tutor cards */
+.tutor-card{background:linear-gradient(180deg,#ffffff,#f8fbff)}
+.tutor-card:hover{box-shadow:0 6px 18px rgba(13,72,122,0.08);transform:translateY(-2px);transition:all 160ms ease}
+.tutor-info .meta{color:#0b72b9}
+.tutor-info .rates{color:#0660a0}
+
+/* profile contact form tweaks */
+.join-form input,.join-form textarea{border:1px solid #cbdff0;padding:10px;border-radius:6px}
+.join-form button{background:#0b72b9;color:#fff;padding:10px 14px;border-radius:6px;border:none}
+
+/* Aesthetic tutor profile styles */
+.tutor-card{background:linear-gradient(180deg,#ffffff,#f4fbff);padding:14px;border-radius:8px;border:1px solid #e1f0fb}
+.tutor-header{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.tutor-atar{color:#0660a0;font-weight:700}
+.tutor-degree{font-size:14px;color:#123d5a}
+.tutor-meta{list-style:none;padding:0;margin:8px 0 12px 0;color:#2b4f68}
+.tutor-meta li{margin:6px 0}
+.subject-scores{list-style:none;padding:0;margin:8px 0 12px 0}
+.subject-scores li{padding:6px 0;border-bottom:1px dashed #e6f2fb;color:#08384e}
+.tutor-bio{margin-top:10px;color:#234b63}
+
+@media (max-width:720px){
+	.profile-grid{grid-template-columns:1fr;align-items:center}
+	.profile-photo img,.profile-photo .placeholder{width:140px;height:140px}
+	.id-left,.id-right{width:100%}
+}
+
+/* Tutor detail two-column layout */
+.tutor-detail-grid{display:block;margin-top:12px}
+.detail-sidebar .sticky-contact{position:static}
+.tutor-detail .tutor-card, .tutor-detail-grid .tutor-card{padding:18px}
+
+/* Ensure detail page sections stack vertically and headings span full width */
+.tutor-detail .tutor-card{display:block}
+.tutor-detail .tutor-header{display:block;text-align:left}
+.tutor-detail .tutor-card h4{display:block;clear:both;font-size:18px;margin-top:18px;color:#08384e}
+.tutor-detail .subject-scores{margin-top:8px}
+.tutor-detail .subject-scores li{display:flex;justify-content:flex-start;gap:12px;padding:8px 6px;border-bottom:1px dashed #e6f6ff}
+.tutor-detail .subject-scores li .sub{min-width:160px}
+.tutor-detail .tutor-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.subject-scores{display:block;padding:0;margin:8px 0 12px 0}
+.subject-scores li{display:flex;justify-content:space-between;padding:8px 6px;border-bottom:1px dashed #e6f6ff;color:#073b52}
+.subject-scores li .sub{font-weight:700;color:#0b5480}
+.subject-scores li .score{font-weight:700;color:#034a73}
+.detail-main .tutor-header{display:flex;flex-direction:column;gap:6px}
+.tutor-meta{display:flex;flex-wrap:wrap;gap:10px;color:#254f66}
+.tutor-meta li{background:linear-gradient(90deg,#f6fbff,#ffffff);padding:8px 10px;border-radius:6px;border:1px solid #e6f6fb}
+.detail-sidebar .btn{display:block;width:100%;text-align:center}
+.tip{font-size:13px;color:#667; margin-top:8px}
+
+@media (max-width:980px){
+	.tutor-detail-grid{grid-template-columns:1fr}
+}
+
+/* subtle outside Back link */
+.back-outside{margin:8px 0 6px}
+.back-link{color:#0b72b9;opacity:0.6;font-weight:600;font-size:13px;text-decoration:none;padding:6px 8px;border-radius:6px}
+.back-link:hover{opacity:1;text-decoration:underline}

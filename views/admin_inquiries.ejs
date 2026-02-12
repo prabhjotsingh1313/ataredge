@@ -1,0 +1,29 @@
+<%- include('partials/header', {user: user}) %>
+
+<div class="container">
+  <h1>Inquiries</h1>
+  <table style="width:100%;border-collapse:collapse">
+    <thead><tr><th>ID</th><th>Tutor</th><th>Name</th><th>Email</th><th>Message</th><th>Status</th><th>Received</th><th>Action</th></tr></thead>
+    <tbody>
+      <% inquiries.forEach(function(i){ %>
+        <tr style="border-top:1px solid #eee">
+          <td><%= i.id %></td>
+          <td><%= i.tutor_name || i.tutor_id %></td>
+          <td><%= i.fullName %></td>
+          <td><%= i.email %></td>
+          <td style="max-width:360px"><%= i.message %></td>
+          <td><%= i.status %></td>
+          <td><%= i.created_at %></td>
+          <td>
+            <form method="post" action="/admin/inquiries/<%= i.id %>/status" style="display:inline">
+              <select name="status"><option value="read">read</option><option value="new">new</option><option value="closed">closed</option></select>
+              <button class="btn" type="submit">Set</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer') %>

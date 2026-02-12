@@ -1,0 +1,9 @@
+<%- include('partials/header', {user: user}) %>
+
+  <h2>Join Our Team</h2>
+  <form method="post" action="/join">
+    <div class="form-row"><textarea name="bio" placeholder="Short bio / subjects you teach" rows="6"></textarea></div>
+    <button type="submit">Become a tutor</button>
+  </form>
+
+<%- include('partials/footer') %>

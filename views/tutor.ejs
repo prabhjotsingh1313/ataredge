@@ -1,0 +1,81 @@
+<%- include('partials/header', {user: user}) %>
+
+  <div class="card tutor-detail">
+    <div class="profile-photo id-photo" style="text-align:center;margin-bottom:12px">
+      <% if (tutor.photo) { %>
+        <img src="<%= tutor.photo %>" alt="<%= tutor.name %>" style="width:160px;height:160px;object-fit:cover;border-radius:10px">
+      <% } else { %>
+        <div class="placeholder" style="width:160px;height:160px;margin:0 auto;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:28px"><%= tutor.name.split(' ').map(n=>n[0]).join('') %></div>
+      <% } %>
+    </div>
+
+    <h2 style="text-align:center;margin-top:0"><%= tutor.name %></h2>
+
+    <div class="back-outside">
+      <a class="back-link" href="/tutors">← Back to Tutors</a>
+    </div>
+
+    <div class="detail-main">
+      <div class="tutor-card">
+        <div class="tutor-header">
+          <div class="tutor-atar">ATAR: <strong><%= tutor.atar || '—' %></strong></div>
+          <div class="tutor-degree"><%= tutor.degree || '' %></div>
+        </div>
+
+        <ul class="tutor-meta">
+          <li><strong>Experience:</strong> <%= tutor.experience || '—' %></li>
+          <li>Online: $50</li>
+        </ul>
+
+        <h4>Academic achievements</h4>
+        <ul class="subject-scores">
+          <% if (tutor.subjects) { %>
+            <% tutor.subjects.split(';').forEach(function(s){ if(s && s.trim()){ var p=s.split(':'); %>
+              <li><span class="sub"><%= p[0].trim() %></span><span class="score"><%= p[1] ? p[1].trim() : '' %></span></li>
+            <% } }) %>
+          <% } %>
+        </ul>
+
+        <h4>Tutoring</h4>
+        <% 
+          var subjList = [];
+          if (tutor.subjects) {
+            subjList = tutor.subjects.split(';').map(function(s){ return s.split(':')[0].trim(); }).filter(Boolean);
+          }
+          ['Junior Maths','Junior Science'].forEach(function(s){ if (subjList.indexOf(s) === -1) subjList.push(s); });
+        %>
+        <p><strong>Subjects:</strong> <%= subjList.join(', ') %></p>
+
+        <h4>Locations</h4>
+        <p>Online only</p>
+
+      </div>
+
+      <div class="card contact-below" style="margin-top:18px">
+      <h3 style="margin-top:6px">Contact <%= tutor.name %></h3>
+        <% if (success) { %>
+          <div class="card">Thanks — your message has been sent. We will pass it to the tutor and follow up.</div>
+        <% } %>
+        <form method="post" action="/tutors/<%= tutor.id %>/contact" class="join-form">
+          <div class="form-row"><input name="fullName" placeholder="Full name" required></div>
+          <div class="form-row"><input name="email" type="email" placeholder="Email address" required></div>
+          <div class="form-row"><input name="mobile" placeholder="Mobile number"></div>
+          <div class="form-row">
+            <label>Are you a:</label>
+            <select name="relation">
+              <option value="Student">Student</option>
+              <option value="Parent/Guardian">Parent/Guardian</option>
+            </select>
+          </div>
+          <div class="form-row"><input name="yearLevel" placeholder="Student year level (e.g. Year 11)"></div>
+          <div class="form-row"><input name="school" placeholder="School"></div>
+          <div class="form-row"><textarea name="message" placeholder="Message — subjects, availability, preferences" rows="5"></textarea></div>
+          <div class="form-row"><button type="submit">Contact <%= tutor.name.split(' ')[0] %></button></div>
+        </form>
+        
+        <p class="tip">Tip: include preferred times and subjects to help the tutor respond quickly.</p>
+      </div>
+    </div>
+  </div>
+
+<%- include('partials/footer') %>

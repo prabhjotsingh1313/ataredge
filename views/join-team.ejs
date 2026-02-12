@@ -1,0 +1,23 @@
+<%- include('partials/header', {user: user}) %>
+
+  <h1>Join Our Team</h1>
+  <p>We're always looking for passionate tutors who can inspire students. Please complete the form below and we'll be in touch.</p>
+
+  <% if (success) { %>
+    <div class="card">Thank you — your application has been received. We'll be in touch shortly.</div>
+  <% } else { %>
+    <form class="join-form" method="post" action="/join-team">
+      <div class="form-row"><input name="fullName" placeholder="Full Name" required></div>
+      <div class="form-row"><input name="email" type="email" placeholder="Email Address" required></div>
+      <div class="form-row"><input name="mobile" placeholder="Mobile Number"></div>
+      <div class="form-row"><input name="atar" placeholder="ATAR"></div>
+      <div class="form-row"><input name="highSchool" placeholder="High School"></div>
+      <div class="form-row"><input name="graduationYear" placeholder="Year of Graduation"></div>
+      <div class="form-row"><input name="university" placeholder="University"></div>
+      <div class="form-row"><input name="degree" placeholder="Degree"></div>
+      <div class="form-row"><textarea name="message" rows="5" placeholder="Tell us your subject marks, subjects you would like to teach, time availability, location preferences or any questions you might have!"></textarea></div>
+      <div class="form-row"><button type="submit">Submit</button></div>
+    </form>
+  <% } %>
+
+<%- include('partials/footer') %>

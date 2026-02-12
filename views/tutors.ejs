@@ -1,0 +1,60 @@
+<%- include('partials/header', {user: user}) %>
+
+  <h1>Our Tutors</h1>
+  <p>Meet our experienced tutors — click a name to view their profile and bio.</p>
+
+  <div class="tutors-controls">
+    <div class="tutors-title"><h1>Our Tutors</h1></div>
+    <div class="tutors-filter">
+      <form method="get" action="/tutors">
+        <label for="subject">Filter by subject:</label>
+        <select id="subject" name="subject">
+          <option value="">— All —</option>
+          <option value="Biology" <%= filter==='Biology' ? 'selected' : '' %>>Biology</option>
+          <option value="Physics" <%= filter==='Physics' ? 'selected' : '' %>>Physics</option>
+          <option value="Chemistry" <%= filter==='Chemistry' ? 'selected' : '' %>>Chemistry</option>
+          <option value="Methods" <%= filter==='Methods' ? 'selected' : '' %>>Methods</option>
+          <option value="Digital" <%= filter==='Digital' ? 'selected' : '' %>>Digital Solutions</option>
+        </select>
+        <button type="submit" class="btn">Apply</button>
+      </form>
+    </div>
+  </div>
+
+  <% if (tutors && tutors.length) { %>
+    <div class="tutors-grid">
+      <% tutors.forEach(function(t){ %>
+        <div class="tutor-card">
+          <div class="tutor-photo">
+            <% if (t.photo) { %>
+              <img src="<%= t.photo %>" alt="<%= t.name %>" />
+            <% } else { %>
+              <div class="placeholder"><%= t.name.split(' ').map(n=>n[0]).join('') %></div>
+            <% } %>
+          </div>
+          <div class="tutor-info">
+            <h3><a href="/tutors/<%= t.id %>"><%= t.name %></a></h3>
+            <div class="meta">ATAR: <strong><%= t.atar || '—' %></strong></div>
+            <div class="degree"><%= t.degree || '' %></div>
+            <div class="rates">Online: $50</div>
+            <p class="small"><%= t.bio ? t.bio.substring(0,160) : '' %></p>
+            <div class="actions"><a class="btn" href="/tutors/<%= t.id %>">Details</a></div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p>No tutors listed yet. <a href="/join-team">Become a tutor</a>.</p>
+  <% } %>
+
+  <div class="banner">
+    <div class="banner-text">
+      <h3>Have a question or want to book?</h3>
+      <p>Contact us and we’ll connect you with a tutor who matches your needs and schedule.</p>
+    </div>
+    <div class="banner-cta">
+      <a class="btn" href="/contact">Contact Us</a>
+    </div>
+  </div>
+
+<%- include('partials/footer') %>

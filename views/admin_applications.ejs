@@ -1,0 +1,27 @@
+<%- include('partials/header', {user: user}) %>
+
+<div class="container">
+  <h1>Applications</h1>
+  <table style="width:100%;border-collapse:collapse">
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>ATAR</th><th>Message</th><th>Received</th><th>Action</th></tr></thead>
+    <tbody>
+      <% applications.forEach(function(a){ %>
+        <tr style="border-top:1px solid #eee">
+          <td><%= a.id %></td>
+          <td><%= a.fullName %></td>
+          <td><%= a.email %></td>
+          <td><%= a.atar %></td>
+          <td style="max-width:360px"><%= a.message %></td>
+          <td><%= a.created_at %></td>
+          <td>
+            <form method="post" action="/admin/applications/<%= a.id %>/delete" onsubmit="return confirm('Delete application?')">
+              <button class="btn" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer') %>

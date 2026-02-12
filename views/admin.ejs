@@ -1,0 +1,13 @@
+<%- include('partials/header', {user: user}) %>
+
+<div class="container">
+  <h1>Admin Dashboard</h1>
+  <p>Quick counts</p>
+  <ul>
+    <li><a href="/admin/inquiries">Inquiries (<%= counts.inquiries %>)</a></li>
+    <li><a href="/admin/applications">Applications (<%= counts.applications %>)</a></li>
+    <li><a href="/admin/contacts">Contacts (<%= counts.contacts %>)</a></li>
+  </ul>
+</div>
+
+<%- include('partials/footer') %>

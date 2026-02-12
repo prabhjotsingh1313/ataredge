@@ -1,0 +1,61 @@
+<%- include('partials/header', {user: user}) %>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Get the ATAR Edge</h1>
+      <p class="lead">Personalised tutoring and assignment support to help high school students reach their ATAR potential.</p>
+      <div class="cta-row">
+        <a class="btn" href="/services">Explore Services</a>
+        <a class="btn btn-outline" href="/join-team">Become a Tutor</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="services">
+    <h2>Our Services</h2>
+    <div class="services-grid">
+      <div class="service-card">
+        <h3>ATAR Tutoring</h3>
+        <p>One-on-one lessons focused on syllabus mastery, exam technique and targeted ATAR strategies.</p>
+      </div>
+      <div class="service-card">
+        <h3>UCAT Tutoring</h3>
+        <p>Specialised preparation for UCAT — timed practice, question strategies and performance review.</p>
+      </div>
+      <div class="service-card">
+        <h3>Internal Assignment Reviews</h3>
+        <p>Detailed feedback and mark-aligned revisions to improve internal assessment results.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-on" style="margin-top:24px">
+    <h2>Tutors Featured On</h2>
+    <p>Our tutors and founder have been featured in:</p>
+    <div class="featured-logos">
+      <div class="logo-item">
+        <img src="/The-Courier-Mail-logo.avif" alt="The Courier-Mail" />
+      </div>
+      <div class="logo-item">
+        <img src="/EQI-logo.png" alt="EQI - Education Queensland International" />
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Featured Tutors</h2>
+    <% if (tutors && tutors.length) { %>
+      <div class="featured-grid">
+      <% tutors.slice(0,3).forEach(function(t){ %>
+        <div class="card">
+          <h3><a href="/tutors/<%= t.id %>"><%= t.name %></a></h3>
+          <p><%= t.bio ? t.bio.substring(0,160) : 'No bio yet' %></p>
+        </div>
+      <% }) %>
+      </div>
+    <% } else { %>
+      <p>No tutors yet. Be the first to <a href="/join-team">join</a> our team.</p>
+    <% } %>
+  </section>
+
+<%- include('partials/footer') %>

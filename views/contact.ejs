@@ -1,0 +1,11 @@
+<%- include('partials/header', {user: user}) %>
+
+  <h2>Contact Us</h2>
+  <form method="post" action="/contact">
+    <div class="form-row"><input name="name" placeholder="Your name" required></div>
+    <div class="form-row"><input name="email" type="email" placeholder="Email" required></div>
+    <div class="form-row"><textarea name="message" placeholder="Message" rows="6" required></textarea></div>
+    <button type="submit">Send</button>
+  </form>
+
+<%- include('partials/footer') %>
