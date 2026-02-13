@@ -5,10 +5,13 @@ header{background:#0b72b9;color:#fff;padding:14px 0}
 header .container{display:flex;align-items:center;justify-content:space-between}
 a.nav{color:#fff;margin-left:12px;text-decoration:none}
 .nav-left{display:flex;align-items:center;gap:18px}
-.brand a{font-size:20px}
-.main-nav .nav{margin-right:12px;font-size:18px}
+.brand a{font-size:18px}
+.main-nav .nav{margin-right:10px;font-size:16px}
 .nav-right{display:flex;align-items:center;gap:8px}
 .contact-nav{margin-left:14px;padding:6px 10px;background:rgba(255,255,255,0.08);border-radius:6px}
+.auth-btn{margin-left:8px;padding:8px 10px;border-radius:6px;text-decoration:none;font-weight:600}
+.auth-btn.login{background:transparent;border:1px solid rgba(255,255,255,0.16);color:#fff}
+.auth-btn.signup{background:#ffd166;color:#07223a}
 .featured-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
 .featured-grid .card{margin:0}
 

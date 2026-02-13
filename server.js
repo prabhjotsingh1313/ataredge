@@ -149,7 +149,7 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/signup', (req, res) => res.render('signup'));
+app.get('/signup', (req, res) => res.render('signup', { user: req.session.user }));
 app.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) return res.redirect('/signup');
@@ -165,7 +165,7 @@ app.post('/signup', async (req, res) => {
   });
 });
 
-app.get('/login', (req, res) => res.render('login'));
+app.get('/login', (req, res) => res.render('login', { user: req.session.user }));
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
