@@ -4,9 +4,11 @@ header{background:#0b72b9;color:#fff;padding:14px 0}
 .header-inner{max-width:1100px;margin:0 auto}
 header .container{display:flex;align-items:center;justify-content:space-between}
 a.nav{color:#fff;margin-left:12px;text-decoration:none}
-.nav-left{display:flex;align-items:center;gap:18px}
+.nav-left{display:flex;align-items:center;gap:12px}
+.main-nav{display:flex;align-items:center;gap:12px;margin-left:8px}
 .brand a{font-size:18px}
 .main-nav .nav{margin-right:10px;font-size:16px}
+.main-nav .nav, .nav-right .nav, .contact-nav, .auth-btn, .brand a{white-space:nowrap}
 .nav-right{display:flex;align-items:center;gap:8px}
 .contact-nav{margin-left:14px;padding:6px 10px;background:rgba(255,255,255,0.08);border-radius:6px}
 .auth-btn{margin-left:8px;padding:8px 10px;border-radius:6px;text-decoration:none;font-weight:600}
