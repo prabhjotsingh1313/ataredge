@@ -102,6 +102,31 @@ db.serialize(() => {
   db.run("ALTER TABLE inquiries ADD COLUMN status TEXT", () => {});
 });
 
+// If there are no tutors in the DB (e.g. fresh deploy), insert a sample tutor so the site isn't empty.
+db.get('SELECT COUNT(*) AS c FROM users WHERE is_tutor=1', (err, row) => {
+  if (err) return console.error('Error counting tutors', err);
+  const count = row && row.c ? row.c : 0;
+  if (count === 0) {
+    const sampleName = 'Hariharan Manikandan';
+    db.get('SELECT id FROM users WHERE name = ? AND is_tutor=1', [sampleName], (e, r) => {
+      if (e) return console.error('Error checking sample tutor', e);
+      if (r && r.id) return console.log('Sample tutor already present');
+      const subjects = 'Biology:100;Physics:99;Chemistry:98;Methods:96';
+      const bio = 'First-year Medicine student at Monash University with 2 years tutoring experience. Available online only.';
+      db.run(
+        'INSERT INTO users (name, email, is_tutor, bio, atar, degree, experience, availability, price_y9, price_y10_12, subjects) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+        [sampleName, '', 1, bio, '99.45', 'Bachelor of Medical Science / Doctor of Medicine (Monash University)', '2 years', 'Online only', 40, 50, subjects],
+        function(insertErr) {
+          if (insertErr) return console.error('Failed to insert sample tutor', insertErr);
+          console.log('Inserted sample tutor with id', this.lastID);
+        }
+      );
+    });
+  } else {
+    console.log('Tutor count:', count);
+  }
+});
+
 // Configure SendGrid
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
 const FOUNDER_EMAIL = process.env.FOUNDER_EMAIL || 'prabhjot@ataredgeacademy.com.au';
