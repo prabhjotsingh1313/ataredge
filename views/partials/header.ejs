@@ -22,7 +22,13 @@
       <div class="nav-right">
         <% if (user) { %>
           <span style="margin-right:12px;color:#fff">Hello, <%= user.name %></span>
+          <% if (user.is_admin) { %>
+            <a class="nav" href="/admin">Admin</a>
+          <% } %>
           <a class="nav" href="/logout">Logout</a>
+        <% } else { %>
+          <a class="nav" href="/login">Login</a>
+          <a class="nav" href="/signup">Sign up</a>
         <% } %>
         <a class="nav contact-nav" href="/contact">Contact Us</a>
       </div>

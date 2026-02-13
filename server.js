@@ -62,6 +62,7 @@ db.serialize(() => {
   db.run("ALTER TABLE users ADD COLUMN price_y10_12 INTEGER", () => {});
   db.run("ALTER TABLE users ADD COLUMN subjects TEXT", () => {});
   db.run("ALTER TABLE users ADD COLUMN photo TEXT", () => {});
+  db.run("ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0", () => {});
   db.run(`CREATE TABLE IF NOT EXISTS applications (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     fullName TEXT,
@@ -153,10 +154,13 @@ app.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) return res.redirect('/signup');
   const hash = await bcrypt.hash(password, 10);
-  db.run('INSERT INTO users (name,email,password) VALUES (?,?,?)', [name, email, hash], function(err) {
+  // If signing up with founder email, mark as admin
+  const founderEmail = process.env.FOUNDER_EMAIL || 'prabhjot@ataredgeacademy.com.au';
+  const isAdmin = (email && email.toLowerCase() === founderEmail.toLowerCase()) ? 1 : 0;
+  db.run('INSERT INTO users (name,email,password,is_admin) VALUES (?,?,?,?)', [name, email, hash, isAdmin], function(err) {
     if (err) return res.redirect('/signup');
     req.session.userId = this.lastID;
-    req.session.user = { id: this.lastID, name, email };
+    req.session.user = { id: this.lastID, name, email, is_admin: isAdmin };
     res.redirect('/');
   });
 });
@@ -169,7 +173,7 @@ app.post('/login', (req, res) => {
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.redirect('/login');
     req.session.userId = user.id;
-    req.session.user = { id: user.id, name: user.name, email: user.email, is_tutor: user.is_tutor };
+    req.session.user = { id: user.id, name: user.name, email: user.email, is_tutor: user.is_tutor, is_admin: user.is_admin };
     res.redirect('/');
   });
 });
@@ -329,7 +333,10 @@ app.post('/join-team', (req, res) => {
 // --- Admin area ---
 function requireFounder(req, res, next) {
   const founder = process.env.FOUNDER_EMAIL || 'prabhjot@ataredgeacademy.com.au';
-  if (req.session && req.session.user && req.session.user.email === founder) return next();
+  if (req.session && req.session.user) {
+    if (req.session.user.is_admin) return next();
+    if (req.session.user.email && req.session.user.email.toLowerCase() === founder.toLowerCase()) return next();
+  }
   return res.status(403).send('Forbidden');
 }
 
