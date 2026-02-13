@@ -2,19 +2,21 @@
 
 <div class="container">
   <h1>Contact messages</h1>
-  <table style="width:100%;border-collapse:collapse">
-    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Message</th><th>Status</th><th>Received</th><th>Action</th></tr></thead>
+  <h3>Open messages (<span id="open-count"><%= contacts_open.length %></span>)</h3>
+  <table id="open-table" style="width:100%;border-collapse:collapse">
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Message</th><th>Status</th><th>Received</th><th>Action</th></tr></thead>
     <tbody>
-      <% contacts.forEach(function(c){ %>
-        <tr style="border-top:1px solid #eee">
+      <% contacts_open.forEach(function(c){ %>
+        <tr data-id="<%= c.id %>" style="border-top:1px solid #eee">
           <td><%= c.id %></td>
           <td><%= c.name %></td>
           <td><%= c.email %></td>
+          <td><%= c.phone || '' %></td>
           <td style="max-width:360px"><%= c.message %></td>
-          <td><%= c.status %></td>
+          <td class="status-cell"><%= c.status || 'new' %></td>
           <td><%= c.created_at %></td>
           <td>
-            <form method="post" action="/admin/contacts/<%= c.id %>/status" style="display:inline">
+            <form class="status-form" method="post" action="/admin/contacts/<%= c.id %>/status" style="display:inline">
               <select name="status"><option value="read">read</option><option value="new">new</option><option value="closed">closed</option></select>
               <button class="btn" type="submit">Set</button>
             </form>
@@ -23,6 +25,50 @@
       <% }) %>
     </tbody>
   </table>
+
+  <h3 style="margin-top:18px">Closed messages (<%= contacts_closed.length %>)</h3>
+  <table id="closed-table" style="width:100%;border-collapse:collapse">
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Message</th><th>Status</th><th>Received</th></tr></thead>
+    <tbody>
+      <% contacts_closed.forEach(function(c){ %>
+        <tr data-id="<%= c.id %>" style="border-top:1px solid #eee;opacity:0.8">
+          <td><%= c.id %></td>
+          <td><%= c.name %></td>
+          <td><%= c.email %></td>
+          <td><%= c.phone || '' %></td>
+          <td style="max-width:360px"><%= c.message %></td>
+          <td><%= c.status %></td>
+          <td><%= c.created_at %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('submit', function(e){
+      if (!e.target.classList.contains('status-form')) return;
+      e.preventDefault();
+      const form = e.target; const url = form.action;
+      const fd = new FormData(form);
+      fetch(url, {method:'POST', body: fd, headers: {'Accept':'application/json'}})
+        .then(r => r.json())
+        .then(j => {
+          if (!j || !j.ok) return alert('Update failed');
+          const tr = form.closest('tr');
+          const id = tr.getAttribute('data-id');
+          // move row to closed table
+          const closedTbody = document.querySelector('#closed-table tbody');
+          tr.querySelector('.status-cell').innerText = 'closed';
+          // remove form cell action buttons
+          const actionCell = tr.querySelector('td:last-child');
+          if (actionCell) actionCell.remove();
+          closedTbody.prepend(tr);
+          // decrement open count
+          const cntEl = document.getElementById('open-count');
+          const cur = parseInt(cntEl.innerText||'0',10); cntEl.innerText = Math.max(0, cur-1);
+        }).catch(err => { console.error(err); alert('Network error'); });
+    });
+  </script>
 </div>
 
 <%- include('partials/footer') %>

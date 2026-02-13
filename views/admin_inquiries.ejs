@@ -2,20 +2,21 @@
 
 <div class="container">
   <h1>Inquiries</h1>
-  <table style="width:100%;border-collapse:collapse">
+  <h3>Open inquiries (<span id="open-count-i"><%= inquiries_open.length %></span>)</h3>
+  <table id="open-table-i" style="width:100%;border-collapse:collapse">
     <thead><tr><th>ID</th><th>Tutor</th><th>Name</th><th>Email</th><th>Message</th><th>Status</th><th>Received</th><th>Action</th></tr></thead>
     <tbody>
-      <% inquiries.forEach(function(i){ %>
-        <tr style="border-top:1px solid #eee">
+      <% inquiries_open.forEach(function(i){ %>
+        <tr data-id="<%= i.id %>" style="border-top:1px solid #eee">
           <td><%= i.id %></td>
           <td><%= i.tutor_name || i.tutor_id %></td>
           <td><%= i.fullName %></td>
           <td><%= i.email %></td>
           <td style="max-width:360px"><%= i.message %></td>
-          <td><%= i.status %></td>
+          <td class="status-cell"><%= i.status || 'new' %></td>
           <td><%= i.created_at %></td>
           <td>
-            <form method="post" action="/admin/inquiries/<%= i.id %>/status" style="display:inline">
+            <form class="status-form" method="post" action="/admin/inquiries/<%= i.id %>/status" style="display:inline">
               <select name="status"><option value="read">read</option><option value="new">new</option><option value="closed">closed</option></select>
               <button class="btn" type="submit">Set</button>
             </form>
@@ -24,6 +25,44 @@
       <% }) %>
     </tbody>
   </table>
+
+  <h3 style="margin-top:18px">Closed inquiries (<%= inquiries_closed.length %>)</h3>
+  <table id="closed-table-i" style="width:100%;border-collapse:collapse">
+    <thead><tr><th>ID</th><th>Tutor</th><th>Name</th><th>Email</th><th>Message</th><th>Status</th><th>Received</th></tr></thead>
+    <tbody>
+      <% inquiries_closed.forEach(function(i){ %>
+        <tr data-id="<%= i.id %>" style="border-top:1px solid #eee;opacity:0.8">
+          <td><%= i.id %></td>
+          <td><%= i.tutor_name || i.tutor_id %></td>
+          <td><%= i.fullName %></td>
+          <td><%= i.email %></td>
+          <td style="max-width:360px"><%= i.message %></td>
+          <td><%= i.status %></td>
+          <td><%= i.created_at %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('submit', function(e){
+      if (!e.target.classList.contains('status-form')) return;
+      e.preventDefault();
+      const form = e.target; const url = form.action;
+      const fd = new FormData(form);
+      fetch(url, {method:'POST', body: fd, headers: {'Accept':'application/json'}})
+        .then(r => r.json())
+        .then(j => {
+          if (!j || !j.ok) return alert('Update failed');
+          const tr = form.closest('tr');
+          tr.querySelector('.status-cell').innerText = 'closed';
+          const closedTbody = document.querySelector('#closed-table-i tbody');
+          const actionCell = tr.querySelector('td:last-child'); if (actionCell) actionCell.remove();
+          closedTbody.prepend(tr);
+          const cntEl = document.getElementById('open-count-i'); const cur = parseInt(cntEl.innerText||'0',10); cntEl.innerText = Math.max(0, cur-1);
+        }).catch(err => { console.error(err); alert('Network error'); });
+    });
+  </script>
 </div>
 
 <%- include('partials/footer') %>

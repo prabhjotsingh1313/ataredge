@@ -76,16 +76,21 @@ db.serialize(() => {
     message TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+  // ensure applications have a status column for admin handling
+  db.run("ALTER TABLE applications ADD COLUMN status TEXT", () => {});
   db.run(`CREATE TABLE IF NOT EXISTS contacts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     email TEXT,
+    phone TEXT,
     message TEXT,
     status TEXT DEFAULT 'new',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
   // ensure status exists on older DBs
   db.run("ALTER TABLE contacts ADD COLUMN status TEXT", () => {});
+  // ensure phone column exists for older DBs
+  db.run("ALTER TABLE contacts ADD COLUMN phone TEXT", () => {});
   db.run(`CREATE TABLE IF NOT EXISTS inquiries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     tutor_id INTEGER,
@@ -274,10 +279,10 @@ app.post('/join', requireAuth, (req, res) => {
 app.get('/about', (req, res) => res.render('about', { user: req.session.user }));
 app.get('/contact', (req, res) => res.render('contact', { user: req.session.user }));
 app.post('/contact', (req, res) => {
-  const { name, email, message } = req.body;
+  const { name, email, phone, message } = req.body;
   db.run(
-    'INSERT INTO contacts (name,email,message,status) VALUES (?,?,?,?)',
-    [name, email, message, 'new'],
+    'INSERT INTO contacts (name,email,phone,message,status) VALUES (?,?,?,?,?)',
+    [name, email, phone || '', message, 'new'],
     function(err) {
       if (err) {
         console.error('Contact save error', err);
@@ -288,8 +293,8 @@ app.post('/contact', (req, res) => {
       db.get('SELECT ? as dummy', [], (e) => {
         if (typeof sgMail !== 'undefined' && SENDGRID_API_KEY) {
           const subj = `Website contact: ${name}`;
-          const text = `From: ${name}\nEmail: ${email}\n\n${message}`;
-          const html = `<p><strong>From:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><hr/><p>${message.replace(/\n/g,'<br/>')}</p>`;
+          const text = `From: ${name}\nEmail: ${email}\nPhone: ${phone || ''}\n\n${message}`;
+          const html = `<p><strong>From:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone || ''}</p><hr/><p>${message.replace(/\n/g,'<br/>')}</p>`;
 
           const internal = { to: FOUNDER_EMAIL, from: FOUNDER_EMAIL, subject: subj, text, html };
           sgMail.send(internal).catch(err => console.error('SendGrid contact internal error', err));
@@ -341,9 +346,10 @@ function requireFounder(req, res, next) {
 }
 
 app.get('/admin', requireFounder, (req, res) => {
-  db.get('SELECT COUNT(*) AS c FROM inquiries', (err, iq) => {
-    db.get('SELECT COUNT(*) AS c FROM applications', (err2, appc) => {
-      db.get('SELECT COUNT(*) AS c FROM contacts', (err3, cc) => {
+  // Count only non-closed (active) items for quick admin notification counts
+  db.get("SELECT COUNT(*) AS c FROM inquiries WHERE status IS NULL OR status != 'closed'", (err, iq) => {
+    db.get("SELECT COUNT(*) AS c FROM applications WHERE status IS NULL OR status != 'closed'", (err2, appc) => {
+      db.get("SELECT COUNT(*) AS c FROM contacts WHERE status IS NULL OR status != 'closed'", (err3, cc) => {
         res.render('admin', { user: req.session.user, counts: { inquiries: iq.c||0, applications: appc.c||0, contacts: cc.c||0 } });
       });
     });
@@ -351,21 +357,27 @@ app.get('/admin', requireFounder, (req, res) => {
 });
 
 app.get('/admin/inquiries', requireFounder, (req, res) => {
-  db.all('SELECT i.*, u.name AS tutor_name FROM inquiries i LEFT JOIN users u ON i.tutor_id=u.id ORDER BY i.created_at DESC', (err, rows) => {
-    res.render('admin_inquiries', { user: req.session.user, inquiries: rows || [] });
+  db.all("SELECT i.*, u.name AS tutor_name FROM inquiries i LEFT JOIN users u ON i.tutor_id=u.id WHERE i.status IS NULL OR i.status != 'closed' ORDER BY i.created_at DESC", (err, openRows) => {
+    db.all("SELECT i.*, u.name AS tutor_name FROM inquiries i LEFT JOIN users u ON i.tutor_id=u.id WHERE i.status = 'closed' ORDER BY i.created_at DESC", (err2, closedRows) => {
+      res.render('admin_inquiries', { user: req.session.user, inquiries_open: openRows || [], inquiries_closed: closedRows || [] });
+    });
   });
 });
 
 app.post('/admin/inquiries/:id/status', requireFounder, (req, res) => {
   const id = req.params.id; const { status } = req.body;
   db.run('UPDATE inquiries SET status = ? WHERE id = ?', [status || 'read', id], function() {
+    // If request was AJAX, return JSON, else redirect
+    if (req.xhr || req.headers.accept.indexOf('json') !== -1) return res.json({ ok: true });
     res.redirect('/admin/inquiries');
   });
 });
 
 app.get('/admin/applications', requireFounder, (req, res) => {
-  db.all('SELECT * FROM applications ORDER BY created_at DESC', (err, rows) => {
-    res.render('admin_applications', { user: req.session.user, applications: rows || [] });
+  db.all("SELECT * FROM applications WHERE status IS NULL OR status != 'closed' ORDER BY created_at DESC", (err, openRows) => {
+    db.all("SELECT * FROM applications WHERE status = 'closed' ORDER BY created_at DESC", (err2, closedRows) => {
+      res.render('admin_applications', { user: req.session.user, applications_open: openRows || [], applications_closed: closedRows || [] });
+    });
   });
 });
 
@@ -373,15 +385,27 @@ app.post('/admin/applications/:id/delete', requireFounder, (req, res) => {
   const id = req.params.id; db.run('DELETE FROM applications WHERE id = ?', [id], () => res.redirect('/admin/applications'));
 });
 
+// allow changing application status (e.g., to 'closed')
+app.post('/admin/applications/:id/status', requireFounder, (req, res) => {
+  const id = req.params.id; const { status } = req.body;
+  db.run('UPDATE applications SET status = ? WHERE id = ?', [status || 'read', id], function() {
+    if (req.xhr || req.headers.accept.indexOf('json') !== -1) return res.json({ ok: true });
+    res.redirect('/admin/applications');
+  });
+});
+
 app.get('/admin/contacts', requireFounder, (req, res) => {
-  db.all('SELECT * FROM contacts ORDER BY created_at DESC', (err, rows) => {
-    res.render('admin_contacts', { user: req.session.user, contacts: rows || [] });
+  db.all("SELECT * FROM contacts WHERE status IS NULL OR status != 'closed' ORDER BY created_at DESC", (err, openRows) => {
+    db.all("SELECT * FROM contacts WHERE status = 'closed' ORDER BY created_at DESC", (err2, closedRows) => {
+      res.render('admin_contacts', { user: req.session.user, contacts_open: openRows || [], contacts_closed: closedRows || [] });
+    });
   });
 });
 
 app.post('/admin/contacts/:id/status', requireFounder, (req, res) => {
   const id = req.params.id; const { status } = req.body;
   db.run('UPDATE contacts SET status = ? WHERE id = ?', [status || 'read', id], function() {
+    if (req.xhr || req.headers.accept.indexOf('json') !== -1) return res.json({ ok: true });
     res.redirect('/admin/contacts');
   });
 });

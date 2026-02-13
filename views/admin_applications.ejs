@@ -2,11 +2,12 @@
 
 <div class="container">
   <h1>Applications</h1>
-  <table style="width:100%;border-collapse:collapse">
+  <h3>Open applications (<span id="open-count-apps"><%= applications_open.length %></span>)</h3>
+  <table id="open-table-apps" style="width:100%;border-collapse:collapse">
     <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>ATAR</th><th>Message</th><th>Received</th><th>Action</th></tr></thead>
     <tbody>
-      <% applications.forEach(function(a){ %>
-        <tr style="border-top:1px solid #eee">
+      <% applications_open.forEach(function(a){ %>
+        <tr data-id="<%= a.id %>" style="border-top:1px solid #eee">
           <td><%= a.id %></td>
           <td><%= a.fullName %></td>
           <td><%= a.email %></td>
@@ -14,7 +15,11 @@
           <td style="max-width:360px"><%= a.message %></td>
           <td><%= a.created_at %></td>
           <td>
-            <form method="post" action="/admin/applications/<%= a.id %>/delete" onsubmit="return confirm('Delete application?')">
+            <form class="status-form" method="post" action="/admin/applications/<%= a.id %>/status" style="display:inline">
+              <select name="status"><option value="read">read</option><option value="new">new</option><option value="closed">closed</option></select>
+              <button class="btn" type="submit">Set</button>
+            </form>
+            <form method="post" action="/admin/applications/<%= a.id %>/delete" onsubmit="return confirm('Delete application?')" style="display:inline;margin-left:8px">
               <button class="btn" type="submit">Delete</button>
             </form>
           </td>
@@ -22,6 +27,42 @@
       <% }) %>
     </tbody>
   </table>
+
+  <h3 style="margin-top:18px">Closed applications (<%= applications_closed.length %>)</h3>
+  <table id="closed-table-apps" style="width:100%;border-collapse:collapse">
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>ATAR</th><th>Message</th><th>Received</th></tr></thead>
+    <tbody>
+      <% applications_closed.forEach(function(a){ %>
+        <tr data-id="<%= a.id %>" style="border-top:1px solid #eee;opacity:0.8">
+          <td><%= a.id %></td>
+          <td><%= a.fullName %></td>
+          <td><%= a.email %></td>
+          <td><%= a.atar %></td>
+          <td style="max-width:360px"><%= a.message %></td>
+          <td><%= a.created_at %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('submit', function(e){
+      if (!e.target.classList.contains('status-form')) return;
+      e.preventDefault();
+      const form = e.target; const url = form.action;
+      const fd = new FormData(form);
+      fetch(url, {method:'POST', body: fd, headers: {'Accept':'application/json'}})
+        .then(r => r.json())
+        .then(j => {
+          if (!j || !j.ok) return alert('Update failed');
+          const tr = form.closest('tr');
+          const closedTbody = document.querySelector('#closed-table-apps tbody');
+          const actionCell = tr.querySelector('td:last-child'); if (actionCell) actionCell.remove();
+          closedTbody.prepend(tr);
+          const cntEl = document.getElementById('open-count-apps'); const cur = parseInt(cntEl.innerText||'0',10); cntEl.innerText = Math.max(0, cur-1);
+        }).catch(err => { console.error(err); alert('Network error'); });
+    });
+  </script>
 </div>
 
 <%- include('partials/footer') %>
