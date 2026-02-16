@@ -108,26 +108,54 @@ db.serialize(() => {
   db.run("ALTER TABLE inquiries ADD COLUMN status TEXT", () => {});
 });
 
-// If there are no tutors in the DB (e.g. fresh deploy), insert a sample tutor so the site isn't empty.
+// If there are no tutors in the DB (e.g. fresh deploy), insert sample tutors so the site isn't empty.
 db.get('SELECT COUNT(*) AS c FROM users WHERE is_tutor=1', (err, row) => {
   if (err) return console.error('Error counting tutors', err);
   const count = row && row.c ? row.c : 0;
   if (count === 0) {
-    const sampleName = 'Hariharan Manikandan';
-    db.get('SELECT id FROM users WHERE name = ? AND is_tutor=1', [sampleName], (e, r) => {
-      if (e) return console.error('Error checking sample tutor', e);
-      if (r && r.id) return console.log('Sample tutor already present');
-      const subjects = 'Biology:100;Physics:99;Chemistry:98;Methods:96';
-      const bio = 'First-year Medicine student at Monash University with 2 years tutoring experience. Available online only.';
-      db.run(
-        'INSERT INTO users (name, email, is_tutor, bio, atar, degree, experience, availability, price_y9, price_y10_12, subjects) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-        [sampleName, '', 1, bio, '99.45', 'Bachelor of Medical Science / Doctor of Medicine (Monash University)', '2 years', 'Online only', 40, 50, subjects],
-        function(insertErr) {
-          if (insertErr) return console.error('Failed to insert sample tutor', insertErr);
-          console.log('Inserted sample tutor with id', this.lastID);
-        }
-      );
-    });
+    // Insert Hariharan
+    const hariharan = {
+      name: 'Hariharan Manikandan',
+      email: 'hariharan@ataredgeacademy.com.au',
+      bio: 'First year Medicine student at Monash University with 2 years tutoring experience. Available online only.',
+      atar: '99.45',
+      degree: 'Bachelor of Medical Science / Doctor of Medicine (Monash University)',
+      experience: '2 years',
+      availability: 'Online only',
+      price_y9: 40,
+      price_y10_12: 50,
+      subjects: 'Biology:100;Physics:99;Chemistry:98;Methods:96'
+    };
+    db.run(
+      'INSERT INTO users (name, email, is_tutor, bio, atar, degree, experience, availability, price_y9, price_y10_12, subjects) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+      [hariharan.name, hariharan.email, 1, hariharan.bio, hariharan.atar, hariharan.degree, hariharan.experience, hariharan.availability, hariharan.price_y9, hariharan.price_y10_12, hariharan.subjects],
+      function(insertErr) {
+        if (insertErr) return console.error('Failed to insert Hariharan', insertErr);
+        console.log('Inserted Hariharan with id', this.lastID);
+      }
+    );
+
+    // Insert Armin
+    const armin = {
+      name: 'Armin',
+      email: 'armin@ataredgeacademy.com.au',
+      bio: 'IB graduate with 41.75 and ATAR equivalent of 98. Available for online and in-person tutoring on the west side of Brisbane, Toowong and surrounding suburbs, and CBD.',
+      atar: '98',
+      degree: 'Bachelor of Advanced Finance and Economics (University of Queensland)',
+      experience: '2 years',
+      availability: 'Online ($45) and in-person ($60) - West side of Brisbane, Toowong, and CBD',
+      price_y9: 45,
+      price_y10_12: 60,
+      subjects: 'Chemistry:86; Maths AAHL:93; Physics:84; Business:86'
+    };
+    db.run(
+      'INSERT INTO users (name, email, is_tutor, bio, atar, degree, experience, availability, price_y9, price_y10_12, subjects) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+      [armin.name, armin.email, 1, armin.bio, armin.atar, armin.degree, armin.experience, armin.availability, armin.price_y9, armin.price_y10_12, armin.subjects],
+      function(insertErr) {
+        if (insertErr) return console.error('Failed to insert Armin', insertErr);
+        console.log('Inserted Armin with id', this.lastID);
+      }
+    );
   } else {
     console.log('Tutor count:', count);
   }
