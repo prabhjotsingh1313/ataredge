@@ -4,7 +4,8 @@
   "private": true,
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "add:hudson": "node scripts/add_hudson.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",

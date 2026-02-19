@@ -109,57 +109,121 @@ db.serialize(() => {
   db.run("ALTER TABLE inquiries ADD COLUMN status TEXT", () => {});
 });
 
-// If there are no tutors in the DB (e.g. fresh deploy), insert sample tutors so the site isn't empty.
-db.get('SELECT COUNT(*) AS c FROM users WHERE is_tutor=1', (err, row) => {
-  if (err) return console.error('Error counting tutors', err);
-  const count = row && row.c ? row.c : 0;
-  if (count === 0) {
-    // Insert Hariharan
-    const hariharan = {
-      name: 'Hariharan Manikandan',
-      email: 'hariharan@ataredgeacademy.com.au',
-      bio: 'First year Medicine student at Monash University with 2 years tutoring experience. Available online only.',
-      atar: '99.45',
-      degree: 'Bachelor of Medical Science / Doctor of Medicine (Monash University)',
-      experience: '2 years',
-      availability: 'Online only',
-      price_y9: 40,
-      price_y10_12: 50,
-      subjects: 'Biology:100;Physics:99;Chemistry:98;Methods:96'
-    };
-    db.run(
-      'INSERT INTO users (name, email, is_tutor, bio, atar, degree, experience, availability, price_y9, price_y10_12, subjects) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-      [hariharan.name, hariharan.email, 1, hariharan.bio, hariharan.atar, hariharan.degree, hariharan.experience, hariharan.availability, hariharan.price_y9, hariharan.price_y10_12, hariharan.subjects],
-      function(insertErr) {
-        if (insertErr) return console.error('Failed to insert Hariharan', insertErr);
-        console.log('Inserted Hariharan with id', this.lastID);
-      }
-    );
-
-    // Insert Armin
-    const armin = {
-      name: 'Armin Kashefi',
-      email: 'armin@ataredgeacademy.com.au',
-      bio: 'IB graduate with 41.75 and ATAR equivalent of 98. Available for online and in-person tutoring near Toowong and surrounding suburbs, and CBD.',
-      atar: '98',
-      degree: 'Bachelor of Advanced Finance and Economics (University of Queensland)',
-      experience: '2 years',
-      availability: 'Online ($45) and in-person ($60) - West side of Brisbane, Toowong, and CBD',
-      price_y9: 45,
-      price_y10_12: 60,
-      subjects: 'Chemistry:86; Maths AAHL:93; Physics:84; Business:86'
-    };
-    db.run(
-      'INSERT INTO users (name, email, is_tutor, bio, atar, degree, experience, availability, price_y9, price_y10_12, subjects) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-      [armin.name, armin.email, 1, armin.bio, armin.atar, armin.degree, armin.experience, armin.availability, armin.price_y9, armin.price_y10_12, armin.subjects],
-      function(insertErr) {
-        if (insertErr) return console.error('Failed to insert Armin', insertErr);
-        console.log('Inserted Armin with id', this.lastID);
-      }
-    );
-  } else {
-    console.log('Tutor count:', count);
+// Ensure core tutor profiles exist on every startup (covers fresh deploys and partially-seeded production DBs).
+const seedTutors = [
+  {
+    name: 'Hariharan Manikandan',
+    email: 'hariharan@ataredgeacademy.com.au',
+    bio: 'First year Medicine student at Monash University with 2 years tutoring experience. Available online only.',
+    atar: '99.45',
+    degree: 'Bachelor of Medical Science / Doctor of Medicine (Monash University)',
+    experience: '2 years',
+    availability: 'Online only',
+    price_y9: 40,
+    price_y10_12: 50,
+    subjects: 'Biology:100;Physics:99;Chemistry:98;Methods:96',
+    photo: null,
+    ucat_score: null
+  },
+  {
+    name: 'Armin Kashefi',
+    email: 'armin@ataredgeacademy.com.au',
+    bio: 'IB graduate with 41.75 and ATAR equivalent of 98. Available for online and in-person tutoring near Toowong and surrounding suburbs, and CBD.',
+    atar: '98',
+    degree: 'Bachelor of Advanced Finance and Economics (University of Queensland)',
+    experience: '2 years',
+    availability: 'Online ($45) and in-person ($60) - West side of Brisbane, Toowong, and CBD',
+    price_y9: 45,
+    price_y10_12: 60,
+    subjects: 'Chemistry:86; Maths AAHL:93; Physics:84; Business:86',
+    photo: null,
+    ucat_score: null
+  },
+  {
+    name: 'Luqmaan Seedat',
+    email: 'luqmaan@ataredgeacademy.com.au',
+    bio: 'IB tutor with an IB score of 41.75 and ATAR equivalent of 98.00, specializing in Chemistry and Mathematics. Also offering UCAT preparation with a score of 3140. Available for online tutoring.',
+    atar: '98.00',
+    degree: null,
+    experience: null,
+    availability: 'Online only',
+    price_y9: 45,
+    price_y10_12: 50,
+    subjects: 'Chemistry SL/HL; Mathematics AI SL/HL; UCAT Preparation',
+    photo: null,
+    ucat_score: 3140
+  },
+  {
+    name: 'Youssef Hussein',
+    email: 'youssef@ataredgeacademy.com.au',
+    bio: '2nd year Electrical Engineering student at QUT with an ATAR of 94. Specializing in Maths Methods, Physics, and Engineering for Years 10-12. Available online via Google Meet.',
+    atar: '94.00',
+    degree: 'Bachelor of Engineering (Honours) – Electrical (Queensland University of Technology)',
+    experience: '3 years (peer tutoring and exam preparation)',
+    availability: 'Online only',
+    price_y9: 40,
+    price_y10_12: null,
+    subjects: 'Maths Methods:76; Physics:84; Engineering:80',
+    photo: null,
+    ucat_score: null
+  },
+  {
+    name: 'Hudson Rohloff',
+    email: 'hudson@ataredgeacademy.com.au',
+    bio: 'Scholarship recipient and Bachelor of Engineering and Business student with an ATAR of 96.6. Specializing in Specialist Mathematics, Methods, and Chemistry. Available online and in-person near Carindale, Garden City Library, Carindale Library, Mount Gravatt, and nearby suburbs.',
+    atar: '96.6',
+    degree: 'Bachelor of Engineering and Business',
+    experience: null,
+    availability: 'In-person near Carindale, Garden City Library, Carindale Library, Mount Gravatt, and nearby suburbs; online',
+    price_y9: 45,
+    price_y10_12: 55,
+    subjects: 'Specialist:87; Methods:91; Chemistry:89',
+    photo: null,
+    ucat_score: null
   }
+];
+
+const upsertTutorSql = `
+  INSERT INTO users (name, email, is_tutor, bio, atar, degree, experience, availability, price_y9, price_y10_12, subjects, photo, ucat_score)
+  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+  ON CONFLICT(email) DO UPDATE SET
+    name = excluded.name,
+    is_tutor = excluded.is_tutor,
+    bio = excluded.bio,
+    atar = excluded.atar,
+    degree = excluded.degree,
+    experience = excluded.experience,
+    availability = excluded.availability,
+    price_y9 = excluded.price_y9,
+    price_y10_12 = excluded.price_y10_12,
+    subjects = excluded.subjects,
+    photo = excluded.photo,
+    ucat_score = excluded.ucat_score
+`;
+
+seedTutors.forEach((tutor) => {
+  db.run(
+    upsertTutorSql,
+    [
+      tutor.name,
+      tutor.email,
+      1,
+      tutor.bio,
+      tutor.atar,
+      tutor.degree,
+      tutor.experience,
+      tutor.availability,
+      tutor.price_y9,
+      tutor.price_y10_12,
+      tutor.subjects,
+      tutor.photo,
+      tutor.ucat_score
+    ],
+    function(insertErr) {
+      if (insertErr) return console.error('Failed to ensure tutor', tutor.email, insertErr);
+      console.log('Ensured tutor profile:', tutor.name);
+    }
+  );
 });
 
 // Configure SendGrid
