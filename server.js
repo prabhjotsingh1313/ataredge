@@ -137,9 +137,9 @@ db.get('SELECT COUNT(*) AS c FROM users WHERE is_tutor=1', (err, row) => {
 
     // Insert Armin
     const armin = {
-      name: 'Armin',
+      name: 'Armin Kashefi',
       email: 'armin@ataredgeacademy.com.au',
-      bio: 'IB graduate with 41.75 and ATAR equivalent of 98. Available for online and in-person tutoring on the west side of Brisbane, Toowong and surrounding suburbs, and CBD.',
+      bio: 'IB graduate with 41.75 and ATAR equivalent of 98. Available for online and in-person tutoring near Toowong and surrounding suburbs, and CBD.',
       atar: '98',
       degree: 'Bachelor of Advanced Finance and Economics (University of Queensland)',
       experience: '2 years',

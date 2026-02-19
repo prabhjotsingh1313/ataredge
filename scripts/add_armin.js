@@ -7,14 +7,14 @@ const tutor = {
   name: 'Armin',
   email: 'armin@ataredgeacademy.com.au',
   is_tutor: 1,
-  bio: 'IB graduate with 41.75 and ATAR equivalent of 98. Available for online and in-person tutoring on the west side of Brisbane, Toowong and surrounding suburbs, and CBD.',
+  bio: 'IB graduate with 41.75 and ATAR equivalent of 98. Available for online and in-person tutoring on West side of Brisbane, Toowong, and CBD.',
   atar: '98',
   degree: 'Bachelor of Arts, Fine Economy (University of Queensland)',
   experience: '2 years',
-  availability: 'Online ($45) and in-person ($60) - West side of Brisbane, Toowong, and CBD',
+  availability: 'West side of Brisbane, Toowong, and CBD and online',
   price_y9: 45,
   price_y10_12: 60,
-  subjects: 'Chemistry:86; Maths AAHL:93; Physics:84; Business:86',
+  subjects: 'Maths AA HL/Maths Methods + Specialist:93; Chemistry HL/Chemistry:86; Physics SL/Physics:84; Business HL:86',
   photo: null
 };
 

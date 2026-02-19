@@ -24,7 +24,7 @@
 
         <ul class="tutor-meta">
           <li><strong>Experience:</strong> <%= tutor.experience || '—' %></li>
-          <li>Online: $50</li>
+          <li>Online: $<%= tutor.price_y9 || '50' %> | In-person: $<%= tutor.price_y10_12 || '60' %></li>
         </ul>
 
         <h4>Academic achievements</h4>
@@ -47,7 +47,7 @@
         <p><strong>Subjects:</strong> <%= subjList.join(', ') %></p>
 
         <h4>Locations</h4>
-        <p>Online only</p>
+        <p><%= tutor.availability || 'Online only' %></p>
 
       </div>
 
