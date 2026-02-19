@@ -15,7 +15,7 @@ const tutor = {
   price_y9: 45,
   price_y10_12: 55,
   subjects: 'Specialist:87; Methods:91; Chemistry:89',
-  photo: null
+  photo: '/Hudson_R.jpg'
 };
 
 const sql = `INSERT OR IGNORE INTO users (name,email,is_tutor,bio,atar,degree,experience,availability,price_y9,price_y10_12,subjects,photo) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
