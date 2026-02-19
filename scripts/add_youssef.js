@@ -4,17 +4,17 @@ const dbPath = path.join(__dirname, '..', 'data', 'data.db');
 const db = new sqlite3.Database(dbPath);
 
 const tutor = {
-  name: 'Hariharan Manikandan',
-  email: 'hariharan@ataredgeacademy.com.au',
+  name: 'Youssef Hussein',
+  email: 'youssef@ataredgeacademy.com.au',
   is_tutor: 1,
-  bio: 'First year Medicine student at Monash University with 2 years tutoring experience. Available online only.',
-  atar: '99.45',
-  degree: 'Bachelor of Medical Science / Doctor of Medicine (Monash University)',
-  experience: '2 years',
+  bio: '2nd year Electrical Engineering student at QUT with an ATAR of 94. Specializing in Maths Methods, Physics, and Engineering for Years 10-12. Available online via Google Meet.',
+  atar: '94.00',
+  degree: 'Bachelor of Engineering (Honours) – Electrical (Queensland University of Technology)',
+  experience: '3 years (peer tutoring and exam preparation)',
   availability: 'Online only',
   price_y9: 40,
   price_y10_12: null,
-  subjects: 'Biology:100/100; Physics:99/100; Chemistry:98/100; Methods:96/100',
+  subjects: 'Maths Methods:76; Physics:84; Engineering:80',
   photo: null
 };
 

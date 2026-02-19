@@ -76,7 +76,7 @@ footer{padding:12px;text-align:center;color:#666;font-size:14px;margin-top:32px}
 .service-card h3{margin-top:0}
 
 /* tutors grid */
-.tutors-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.tutors-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .tutor-card{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #e6eef6;padding:12px;border-radius:8px}
 .tutor-photo img{width:96px;height:96px;object-fit:cover;border-radius:8px}
 .tutor-photo .placeholder{width:96px;height:96px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#666}

@@ -24,7 +24,20 @@
 
         <ul class="tutor-meta">
           <li><strong>Experience:</strong> <%= tutor.experience || '—' %></li>
-          <li>Online: $<%= tutor.price_y9 || '50' %> | In-person: $<%= tutor.price_y10_12 || '60' %></li>
+          <li>
+            <% if (tutor.price_y10_12) { %>
+              <% if (tutor.availability && tutor.availability.toLowerCase().includes('online only')) { %>
+                Online: $<%= tutor.price_y9 || '50' %> (Yr 7-10) | $<%= tutor.price_y10_12 %> (Yr 11-12)
+              <% } else { %>
+                Online: $<%= tutor.price_y9 || '50' %> | In-person: $<%= tutor.price_y10_12 %>
+              <% } %>
+            <% } else { %>
+              Online: $<%= tutor.price_y9 || '50' %>
+            <% } %>
+          </li>
+          <% if (tutor.ucat_score) { %>
+          <li><strong>UCAT Score:</strong> <%= tutor.ucat_score %></li>
+          <% } %>
         </ul>
 
         <h4>Academic achievements</h4>

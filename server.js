@@ -63,6 +63,7 @@ db.serialize(() => {
   db.run("ALTER TABLE users ADD COLUMN subjects TEXT", () => {});
   db.run("ALTER TABLE users ADD COLUMN photo TEXT", () => {});
   db.run("ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0", () => {});
+  db.run("ALTER TABLE users ADD COLUMN ucat_score INTEGER", () => {});
   db.run(`CREATE TABLE IF NOT EXISTS applications (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     fullName TEXT,
@@ -282,7 +283,7 @@ app.post('/tutors/:id/contact', (req, res) => {
 // Our Tutors listing page
 app.get('/tutors', (req, res) => {
   const subject = req.query.subject;
-  let sql = 'SELECT id, name, bio, atar, degree, price_y9, price_y10_12, subjects, photo FROM users WHERE is_tutor=1';
+  let sql = 'SELECT id, name, bio, atar, degree, price_y9, price_y10_12, subjects, photo, availability, ucat_score FROM users WHERE is_tutor=1';
   const params = [];
   if (subject) {
     sql += ' AND subjects LIKE ?';

@@ -4,12 +4,12 @@ const dbPath = path.join(__dirname, '..', 'data', 'data.db');
 const db = new sqlite3.Database(dbPath);
 
 const tutor = {
-  name: 'Armin',
+  name: 'Armin Kashefi',
   email: 'armin@ataredgeacademy.com.au',
   is_tutor: 1,
   bio: 'IB graduate with 41.75 and ATAR equivalent of 98. Available for online and in-person tutoring on West side of Brisbane, Toowong, and CBD.',
   atar: '98',
-  degree: 'Bachelor of Arts, Fine Economy (University of Queensland)',
+  degree: 'Bachelor of Advanced Finance and Economics (University of Queensland)',
   experience: '2 years',
   availability: 'West side of Brisbane, Toowong, and CBD and online',
   price_y9: 45,
